@@ -22,7 +22,6 @@ yarn-error.log
 Thumbs.db
 
 # Project specific
-else/
 dist/
 build/
 coverage/
