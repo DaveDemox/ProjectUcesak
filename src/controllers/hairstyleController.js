@@ -1,4 +1,4 @@
-const HairstyleDAO = require('../dao/hairstyleDAO');
+const HairstyleDAO = require('../dao/storage/hairstyleList');
 const validateHairstyle = require('../validators/hairstyleValidator');
 
 class HairstyleController {

@@ -1,4 +1,4 @@
-const CategoryDAO = require('../dao/categoryDAO');
+const CategoryDAO = require('../dao/storage/categoryList');
 const validateCategory = require('../validators/categoryValidator');
 
 class CategoryController {
