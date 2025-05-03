@@ -1,12 +1,22 @@
-const CategoryDAO = require('../dao/storage/categoryList');
-const { validateCategory } = require('../validators/categoryValidator');
+const Ajv = require("ajv");
+const ajv = new Ajv();
+const CategoryDAO = require('../dao/storage/category-dao');
+
+const schema = {
+  type: "object",
+  properties: {
+    name: { type: "string" },
+  },
+  required: ["name"],
+  additionalProperties: false,
+};
 
 class CategoryAbl {
     async create(categoryData) {
         // Validate category data
-        const validationResult = validateCategory(categoryData);
-        if (!validationResult.isValid) {
-            throw new Error(validationResult.error);
+        const valid = ajv.validate(schema, categoryData);
+        if (!valid) {
+            throw new Error(ajv.errors[0].message);
         }
 
         // Create category using DAO

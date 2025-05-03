@@ -1,13 +1,27 @@
-const HairstyleDAO = require('../dao/storage/hairstyleList');
+const Ajv = require("ajv");
+const ajv = new Ajv();
+const HairstyleDAO = require('../dao/storage/hairstyle-dao');
 const CategoryAbl = require('./categoryAbl');
-const { validateHairstyle } = require('../validators/hairstyleValidator');
+
+const schema = {
+  type: "object",
+  properties: {
+    name: { type: "string" },
+    lengthCategoryId: { type: "string" },
+    faceshapeCategoryId: { type: "string" },
+    note: { type: "string" },
+    isLiked: { type: "boolean" }
+  },
+  required: ["name", "lengthCategoryId", "faceshapeCategoryId"],
+  additionalProperties: false,
+};
 
 class HairstyleAbl {
     async create(hairstyleData) {
         // Validate hairstyle data
-        const validationResult = validateHairstyle(hairstyleData);
-        if (!validationResult.isValid) {
-            throw new Error(validationResult.error);
+        const valid = ajv.validate(schema, hairstyleData);
+        if (!valid) {
+            throw new Error(ajv.errors[0].message);
         }
 
         // Verify categories exist

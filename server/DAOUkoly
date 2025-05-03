@@ -1,0 +1,115 @@
+Schema Examples:
+
+const categorySchema = {
+  id: "123", // generated unique code
+  name: "Short" // unique category name
+};
+
+const hairstyleSchema = {
+  id: "1b30f251a2d7d9845cd44e6b5dd012c1", // generated unique code
+  name: "Bob Cut", // hairstyle name
+  lengthCategoryId: "123", // id of length category
+  faceshapeCategoryId: "456", // id of faceshape category
+  note: "Modern bob cut with layers", // additional description
+  isLiked: true // boolean value indicating if hairstyle is liked
+};
+
+Implementation Status:
+
+✅ Hairstyle DAO Methods (Implemented):
+1. create(hairstyleData)
+   - Purpose: Create a new hairstyle
+   - Parameters: hairstyleData (object containing hairstyle properties)
+   - Returns: Promise<Hairstyle>
+   - Implementation: Create new Hairstyle file and save to storage
+   - Error Handling: Validates category existence, returns specific error codes
+
+2. getById(id)
+   - Purpose: Get a specific hairstyle by its ID
+   - Parameters: id (string) - hairstyle ID
+   - Returns: Promise<Hairstyle>
+   - Implementation: Find hairstyle by ID
+   - Error Handling: Returns null if not found
+
+3. list()
+   - Purpose: Get all hairstyles
+   - Parameters: none
+   - Returns: Promise<Hairstyle[]>
+   - Implementation: Find all hairstyles in storage
+   - Error Handling: Returns empty array if none found
+
+4. toggleLike(id)
+   - Purpose: Toggle the like status of a hairstyle
+   - Parameters: id (string) - hairstyle ID
+   - Returns: Promise<Hairstyle>
+   - Implementation: 
+     * Get hairstyle by ID
+     * Toggle isLiked boolean value
+     * Save updated hairstyle
+   - Error Handling:
+     * Returns null if hairstyle not found
+   - Example:
+     ```javascript
+     // Initial state: { id: "123", isLiked: true }
+     await toggleLike("123");
+     // After toggle: { id: "123", isLiked: false }
+     ```
+
+✅ Category DAO Methods (Implemented):
+1. create(categoryData)
+   - Purpose: Create a new category
+   - Parameters: categoryData (object containing category properties)
+   - Returns: Promise<Category>
+   - Implementation: Create new Category file and save to storage
+   - Error Handling: Validates properties
+
+2. getById(id)
+   - Purpose: Get a specific category by its ID
+   - Parameters: id (string) - category ID
+   - Returns: Promise<Category>
+   - Implementation: Find category by ID
+   - Error Handling: Returns null if not found
+
+3. list()
+   - Purpose: Get all categories
+   - Parameters: none
+   - Returns: Promise<Category[]>
+   - Implementation: Find all categories in storage
+   - Error Handling: Returns empty array if none found
+
+✅ API Endpoints (Implemented):
+1. GET /api/categories
+   - Returns list of all categories
+   - Response format: Category[]
+
+2. GET /api/categories/:id
+   - Returns specific category by ID
+   - Response format: Category
+
+3. POST /api/categories
+   - Creates new category
+   - Request body: categoryData
+   - Response format: Category
+
+4. GET /api/hairstyles
+   - Returns list of all hairstyles
+   - Response format: Hairstyle[]
+
+5. GET /api/hairstyles/:id
+   - Returns specific hairstyle by ID
+   - Response format: Hairstyle
+
+6. POST /api/hairstyles
+   - Creates new hairstyle
+   - Request body: hairstyleData
+   - Response format: Hairstyle
+
+7. PATCH /api/hairstyles/:id/like
+   - Toggles like status of a hairstyle
+   - Response format: Hairstyle
+
+Storage Structure:
+- Categories stored in: server/dao/storage/categoryList/
+- Hairstyles stored in: server/dao/storage/hairstyleList/
+- Each entity stored as a separate JSON file
+- File naming convention: {id}.json 
