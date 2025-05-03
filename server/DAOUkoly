@@ -14,6 +14,27 @@ const hairstyleSchema = {
   isLiked: true // boolean value indicating if hairstyle is liked
 };
 
+Schema Diagram:
+```
++----------------+       +-------------------+
+|    Category    |       |     Hairstyle     |
++----------------+       +-------------------+
+| id: string     |<------| id: string        |
+| name: string   |       | name: string      |
++----------------+       | lengthCategoryId: |
+                        |   string          |
+                        | faceshapeCategoryId:
+                        |   string          |
+                        | note: string      |
+                        | isLiked: boolean  |
+                        +-------------------+
+
+Relationship: 1:N (One-to-Many)
+- One Category can be referenced by many Hairstyles
+- Each Hairstyle references exactly one Category for length
+- Each Hairstyle references exactly one Category for faceshape
+```
+
 Implementation Status:
 
 ✅ Hairstyle DAO Methods (Implemented):
@@ -55,6 +76,21 @@ Implementation Status:
      // After toggle: { id: "123", isLiked: false }
      ```
 
+5. getRandom()
+   - Purpose: Get a random hairstyle
+   - Parameters: none
+   - Returns: Promise<Hairstyle>
+   - Implementation: 
+     * Get all hairstyles
+     * Select random hairstyle from the list
+   - Error Handling:
+     * Returns null if no hairstyles exist
+   - Example:
+     ```javascript
+     const randomHairstyle = await getRandom();
+     // Returns a random hairstyle object
+     ```
+
 ✅ Category DAO Methods (Implemented):
 1. create(categoryData)
    - Purpose: Create a new category
@@ -93,18 +129,25 @@ Implementation Status:
 
 4. GET /api/hairstyles
    - Returns list of all hairstyles
+   - Optional query parameters:
+     * lengthCategoryId: Filter by length category
+     * faceshapeCategoryId: Filter by faceshape category
    - Response format: Hairstyle[]
 
 5. GET /api/hairstyles/:id
    - Returns specific hairstyle by ID
    - Response format: Hairstyle
 
-6. POST /api/hairstyles
+6. GET /api/hairstyles/random
+   - Returns a random hairstyle
+   - Response format: Hairstyle
+
+7. POST /api/hairstyles
    - Creates new hairstyle
    - Request body: hairstyleData
    - Response format: Hairstyle
 
-7. PATCH /api/hairstyles/:id/like
+8. PATCH /api/hairstyles/:id/like
    - Toggles like status of a hairstyle
    - Response format: Hairstyle
 

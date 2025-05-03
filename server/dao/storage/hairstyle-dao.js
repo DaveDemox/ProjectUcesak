@@ -1,76 +1,55 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
 const crypto = require("crypto");
 const categoryDao = require("./category-dao");
+const { v4: uuidv4 } = require('uuid');
 
 const hairstyleFolderPath = path.join(__dirname, "hairstyleList");
 
 // Method to read a hairstyle from a file
-function getById(id) {
+async function getById(id) {
   try {
     const filePath = path.join(hairstyleFolderPath, `${id}.json`);
-    const fileData = fs.readFileSync(filePath, "utf8");
+    const fileData = await fs.readFile(filePath, "utf8");
     const hairstyle = JSON.parse(fileData);
     // Populate category data
     if (hairstyle.lengthCategoryId) {
-      hairstyle.lengthCategory = categoryDao.getById(hairstyle.lengthCategoryId);
+      hairstyle.lengthCategory = await categoryDao.getById(hairstyle.lengthCategoryId);
     }
     if (hairstyle.faceshapeCategoryId) {
-      hairstyle.faceshapeCategory = categoryDao.getById(hairstyle.faceshapeCategoryId);
+      hairstyle.faceshapeCategory = await categoryDao.getById(hairstyle.faceshapeCategoryId);
     }
     return hairstyle;
   } catch (error) {
     if (error.code === "ENOENT") return null;
-    throw { code: "failedToReadHairstyle", message: error.message };
+    throw new Error(`Error reading hairstyle: ${error.message}`);
   }
 }
 
 // Method to write a hairstyle to a file
-function create(hairstyleData) {
+async function create(hairstyleData) {
   try {
-    // Validate categories exist
-    if (hairstyleData.lengthCategoryId) {
-      const lengthCategory = categoryDao.getById(hairstyleData.lengthCategoryId);
-      if (!lengthCategory) {
-        throw {
-          code: "lengthCategoryDoesNotExist",
-          message: "category with id dtoIn.lengthCategoryId does not exist",
-        };
-      }
-    }
-    if (hairstyleData.faceshapeCategoryId) {
-      const faceshapeCategory = categoryDao.getById(hairstyleData.faceshapeCategoryId);
-      if (!faceshapeCategory) {
-        throw {
-          code: "faceshapeCategoryDoesNotExist",
-          message: "category with id dtoIn.faceshapeCategoryId does not exist",
-        };
-      }
-    }
-
-    const hairstyle = {
-      ...hairstyleData,
-      id: crypto.randomBytes(16).toString("hex")
-    };
-    
-    const filePath = path.join(hairstyleFolderPath, `${hairstyle.id}.json`);
-    const fileData = JSON.stringify(hairstyle, null, 2);
-    fs.writeFileSync(filePath, fileData, "utf8");
+    const id = uuidv4();
+    const hairstyle = { ...hairstyleData, id };
+    await fs.writeFile(
+      path.join(hairstyleFolderPath, `${id}.json`),
+      JSON.stringify(hairstyle, null, 2)
+    );
     return hairstyle;
   } catch (error) {
-    throw { code: "failedToCreateHairstyle", message: error.message };
+    throw new Error(`Error creating hairstyle: ${error.message}`);
   }
 }
 
 // Method to update hairstyle in a file
-function update(hairstyle) {
+async function update(hairstyle) {
   try {
-    const currentHairstyle = getById(hairstyle.id);
+    const currentHairstyle = await getById(hairstyle.id);
     if (!currentHairstyle) return null;
 
     // Validate categories exist if being updated
     if (hairstyle.lengthCategoryId) {
-      const lengthCategory = categoryDao.getById(hairstyle.lengthCategoryId);
+      const lengthCategory = await categoryDao.getById(hairstyle.lengthCategoryId);
       if (!lengthCategory) {
         throw {
           code: "categoryNotFound",
@@ -79,7 +58,7 @@ function update(hairstyle) {
       }
     }
     if (hairstyle.faceshapeCategoryId) {
-      const faceshapeCategory = categoryDao.getById(hairstyle.faceshapeCategoryId);
+      const faceshapeCategory = await categoryDao.getById(hairstyle.faceshapeCategoryId);
       if (!faceshapeCategory) {
         throw {
           code: "categoryNotFound",
@@ -91,7 +70,7 @@ function update(hairstyle) {
     const newHairstyle = { ...currentHairstyle, ...hairstyle };
     const filePath = path.join(hairstyleFolderPath, `${hairstyle.id}.json`);
     const fileData = JSON.stringify(newHairstyle, null, 2);
-    fs.writeFileSync(filePath, fileData, "utf8");
+    await fs.writeFile(filePath, fileData, "utf8");
     return newHairstyle;
   } catch (error) {
     throw { code: "failedToUpdateHairstyle", message: error.message };
@@ -99,10 +78,10 @@ function update(hairstyle) {
 }
 
 // Method to remove a hairstyle from a file
-function remove(hairstyleId) {
+async function remove(hairstyleId) {
   try {
     const filePath = path.join(hairstyleFolderPath, `${hairstyleId}.json`);
-    fs.unlinkSync(filePath);
+    await fs.unlink(filePath);
     return {};
   } catch (error) {
     if (error.code === "ENOENT") {
@@ -113,34 +92,39 @@ function remove(hairstyleId) {
 }
 
 // Method to list all hairstyles
-function list() {
+async function list() {
   try {
-    const files = fs.readdirSync(hairstyleFolderPath);
-    const hairstyleList = files.map((file) => {
-      const fileData = fs.readFileSync(
-        path.join(hairstyleFolderPath, file),
-        "utf8"
-      );
-      const hairstyle = JSON.parse(fileData);
-      // Populate category data
-      if (hairstyle.lengthCategoryId) {
-        hairstyle.lengthCategory = categoryDao.getById(hairstyle.lengthCategoryId);
-      }
-      if (hairstyle.faceshapeCategoryId) {
-        hairstyle.faceshapeCategory = categoryDao.getById(hairstyle.faceshapeCategoryId);
-      }
-      return hairstyle;
-    });
+    const files = await fs.readdir(hairstyleFolderPath);
+    const hairstyleList = await Promise.all(
+      files.map(async (file) => {
+        const fileData = await fs.readFile(
+          path.join(hairstyleFolderPath, file),
+          "utf8"
+        );
+        const hairstyle = JSON.parse(fileData);
+        // Populate category data
+        if (hairstyle.lengthCategoryId) {
+          hairstyle.lengthCategory = await categoryDao.getById(hairstyle.lengthCategoryId);
+        }
+        if (hairstyle.faceshapeCategoryId) {
+          hairstyle.faceshapeCategory = await categoryDao.getById(hairstyle.faceshapeCategoryId);
+        }
+        return hairstyle;
+      })
+    );
     return hairstyleList;
   } catch (error) {
-    throw { code: "failedToListHairstyles", message: error.message };
+    if (error.code === "ENOENT") {
+      return [];
+    }
+    throw new Error(`Error listing hairstyles: ${error.message}`);
   }
 }
 
 // Method to list hairstyles by both length and faceshape categories
-function listByCategory(lengthCategoryId, faceshapeCategoryId) {
+async function listByCategory(lengthCategoryId, faceshapeCategoryId) {
   try {
-    const hairstyles = list();
+    const hairstyles = await list();
     return hairstyles.filter(hairstyle => 
       hairstyle.lengthCategoryId === lengthCategoryId && 
       hairstyle.faceshapeCategoryId === faceshapeCategoryId
@@ -151,9 +135,9 @@ function listByCategory(lengthCategoryId, faceshapeCategoryId) {
 }
 
 // Method to list hairstyles by length category
-function listByLengthCategoryId(lengthCategoryId) {
+async function listByLengthCategoryId(lengthCategoryId) {
   try {
-    const hairstyles = list();
+    const hairstyles = await list();
     return hairstyles.filter(hairstyle => 
       hairstyle.lengthCategoryId === lengthCategoryId
     );
@@ -163,9 +147,9 @@ function listByLengthCategoryId(lengthCategoryId) {
 }
 
 // Method to list hairstyles by faceshape category
-function listByFaceshapeCategoryId(faceshapeCategoryId) {
+async function listByFaceshapeCategoryId(faceshapeCategoryId) {
   try {
-    const hairstyles = list();
+    const hairstyles = await list();
     return hairstyles.filter(hairstyle => 
       hairstyle.faceshapeCategoryId === faceshapeCategoryId
     );
@@ -175,9 +159,9 @@ function listByFaceshapeCategoryId(faceshapeCategoryId) {
 }
 
 // Method to toggle like status of a hairstyle
-function toggleLike(id) {
+async function toggleLike(id) {
   try {
-    const hairstyle = getById(id);
+    const hairstyle = await getById(id);
     if (!hairstyle) {
       return null;
     }
@@ -188,11 +172,11 @@ function toggleLike(id) {
     // Save the updated hairstyle
     const filePath = path.join(hairstyleFolderPath, `${id}.json`);
     const fileData = JSON.stringify(hairstyle, null, 2);
-    fs.writeFileSync(filePath, fileData, "utf8");
+    await fs.writeFile(filePath, fileData, "utf8");
 
     return hairstyle;
   } catch (error) {
-    throw { code: "failedToToggleLike", message: error.message };
+    throw new Error(`Error toggling like: ${error.message}`);
   }
 }
 
