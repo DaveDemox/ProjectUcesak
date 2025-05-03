@@ -50,7 +50,7 @@ src/
 ├── models/        # Database models
 ├── routes/        # API routes
 ├── validators/    # Input validation schemas
-└── server.js      # Main application file
+└── app.js         # Main application file
 ```
 
 ## API Documentation
