@@ -1,0 +1,93 @@
+Assignment Requirements and Progress
+
+1. Create a diagram of schemas
+   Status: ❌ Not Completed
+   - Need to create visual diagram showing relationships between Category and Hairstyle schemas
+
+2. Describe each schema and its attributes
+   Status: ✅ Completed
+   - Category Schema:
+     * id: Generated unique code
+     * name: Unique category name
+     * length: Length type (short, medium, long)
+     * faceshape: Faceshape type (oval, square, round)
+   - Hairstyle Schema:
+     * id: Generated unique code
+     * name: Hairstyle name
+     * lengthCategoryId: Reference to length category
+     * faceshapeCategoryId: Reference to faceshape category
+     * note: Additional description
+
+3. Describe DAO methods
+   Status: ✅ Completed
+   - Category DAO Methods:
+     * create(categoryData)
+     * getById(id)
+     * list()
+     * update(id, categoryData)
+     * delete(id)
+     * getCategoryMap()
+   - Hairstyle DAO Methods:
+     * create(hairstyleData)
+     * getById(id)
+     * listByCategory(length, faceshape)
+     * listByLengthCategoryId(lengthCategoryId)
+     * listByFaceshapeCategoryId(faceshapeCategoryId)
+
+4. Describe API endpoints (commands)
+   Status: ✅ Completed
+   - Category Endpoints:
+     * GET /category/list
+     * POST /category/create
+   - Hairstyle Endpoints:
+     * GET /hairstyle/list
+     * POST /hairstyle/create
+   - Each endpoint documented with:
+     * Input/Output schemas
+     * Validation rules
+     * Error handling
+     * Business logic
+
+5. Create git repository and initialize project
+   Status: ✅ Completed
+   - Project initialized with npm
+   - Basic structure created
+   - Dependencies installed:
+     * express
+     * mongoose
+     * ajv
+     * cors
+     * dotenv
+     * nodemon (dev dependency)
+
+6. Develop the backend of the application
+   Status: ✅ Partially Completed
+   - Completed:
+     * Project structure
+     * Database configuration
+     * Models
+     * DAOs
+     * Controllers
+     * Routes
+     * Validation schemas
+   - Remaining:
+     * Error handling middleware
+     * Testing
+     * Documentation
+     * Deployment configuration
+
+7. Push changes to git repository
+   Status: ❌ Not Completed
+   - Need to:
+     * Initialize git repository
+     * Create .gitignore
+     * Make initial commit
+     * Push to remote repository
+
+Next Steps:
+1. Create schema diagram
+2. Complete remaining backend development tasks
+3. Set up git repository and push changes
+4. Add testing
+5. Add documentation
+6. Configure deployment 

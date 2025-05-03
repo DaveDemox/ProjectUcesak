@@ -1,0 +1,261 @@
+Schema Examples:
+
+const categorySchema = {
+  id: "123", // generated unique code
+  name: "Short", // unique category name
+  length: "short", // length type: "short", "medium", "long"
+  faceshape: "oval" // faceshape type: "oval", "square", "round"
+};
+
+const hairstyleSchema = {
+  id: "1b30f251a2d7d9845cd44e6b5dd012c1", // generated unique code
+  name: "Bob Cut", // hairstyle name
+  lengthCategoryId: "123", // id of length category
+  faceshapeCategoryId: "456", // id of faceshape category
+  note: "Modern bob cut with layers" // additional description
+};
+
+Hairstyle DAO Methods:
+
+1. create(hairstyleData)
+   - Purpose: Create a new hairstyle
+   - Parameters: hairstyleData (object containing hairstyle properties)
+   - Returns: Promise<Hairstyle>
+   - Implementation: Create new Hairstyle document and save to database
+
+2. getById(id)
+   - Purpose: Get a specific hairstyle by its ID
+   - Parameters: id (string) - MongoDB ObjectId
+   - Returns: Promise<Hairstyle>
+   - Implementation: Find hairstyle by ID and populate category references
+
+3. listByCategory(length, faceshape)
+   - Purpose: Get all hairstyles matching specific length and faceshape categories
+   - Parameters: 
+     - length (string) - Category ID for length
+     - faceshape (string) - Category ID for faceshape
+   - Returns: Promise<Hairstyle[]>
+   - Implementation: Find hairstyles where both lengthCategoryId and faceshapeCategoryId match
+
+4. listByLengthCategoryId(lengthCategoryId)
+   - Purpose: Get all hairstyles for a specific length category
+   - Parameters: lengthCategoryId (string) - Category ID for length
+   - Returns: Promise<Hairstyle[]>
+   - Implementation: Find hairstyles where lengthCategoryId matches
+
+5. listByFaceshapeCategoryId(faceshapeCategoryId)
+   - Purpose: Get all hairstyles for a specific faceshape category
+   - Parameters: faceshapeCategoryId (string) - Category ID for faceshape
+   - Returns: Promise<Hairstyle[]>
+   - Implementation: Find hairstyles where faceshapeCategoryId matches
+
+Note: All methods should populate the category references (lengthCategoryId and faceshapeCategoryId) to include the full category details in the response.
+
+Category DAO Methods:
+
+1. create(categoryData)
+   - Purpose: Create a new category with unique name
+   - Parameters: categoryData (object containing category properties)
+   - Returns: Promise<Category>
+   - Implementation: Create new Category document and save to database, ensure name is unique
+
+2. getById(id)
+   - Purpose: Get a specific category by its ID
+   - Parameters: id (string) - MongoDB ObjectId
+   - Returns: Promise<Category>
+   - Implementation: Find category by ID
+
+3. list()
+   - Purpose: Get all categories
+   - Parameters: none
+   - Returns: Promise<Category[]>
+   - Implementation: Find all categories
+
+4. update(id, categoryData)
+   - Purpose: Update an existing category
+   - Parameters: 
+     - id (string) - Category ID to update
+     - categoryData (object) - Updated category properties
+   - Returns: Promise<Category>
+   - Implementation: Update category, ensure name remains unique if changed
+
+5. delete(id)
+   - Purpose: Delete a category
+   - Parameters: id (string) - Category ID to delete
+   - Returns: Promise<void>
+   - Implementation: Remove category by ID
+
+6. getCategoryMap()
+   - Purpose: Get a map of all categories
+   - Parameters: none
+   - Returns: Promise<Map<string, Category>>
+   - Implementation: Create a map where key is category ID and value is category object
+
+Note: All methods should handle validation of category properties (name, length, faceshape) according to the schema.
+
+Endpoint Documentation:
+
+hairstyle/list
+Basic Info
+Name: hairstyle/list
+Description: Returns a list of all hairstyles, optionally filtered by length and faceshape categories.
+HTTP Method: get
+Url: <gateway>/hairstyle/list
+
+Input:
+const dtoIn = {
+  lengthCategoryId: "123", // optional: filter by length category
+  faceshapeCategoryId: "456" // optional: filter by faceshape category
+};
+
+Input Validation:
+const schema = {
+  type: "object",
+  properties: {
+    lengthCategoryId: { type: "string" },
+    faceshapeCategoryId: { type: "string" }
+  },
+  required: [],
+  additionalProperties: false
+};
+
+Output:
+const dtoOut = {
+  itemList: [ // list of all hairstyles
+    {
+      id: "1b30f251a2d7d9845cd44e6b5dd012c1", // generated unique code
+      name: "Bob Cut", // hairstyle name
+      lengthCategoryId: "123", // id of length category
+      faceshapeCategoryId: "456", // id of faceshape category
+      note: "Modern bob cut with layers" // additional description
+    }
+  ],
+  categoryMap: { // map of all categories
+    "123": { // key is category ID
+      id: "123",
+      name: "Short",
+      length: "short",
+      faceshape: "oval"
+    }
+  }
+};
+
+Algorithm:
+1. Loads all created hairstyles using hairstyle DAO list
+2. Gets a category map with all categories using category DAO getCategoryMap
+3. Return: Returns properly filled dtoOut with hairstyles and their associated categories
+
+Error List:
+Type: Error
+Code: dtoInIsNotValid
+Message: dtoIn is not valid
+Parameters: none
+
+category/list
+Basic Info
+Name: category/list
+Description: Returns a list of all created categories.
+HTTP Method: get
+Url: <gateway>/category/list
+
+Input:
+const dtoIn = {};
+
+Input Validation:
+const schema = {
+  type: "object",
+  properties: {},
+  required: [],
+  additionalProperties: false
+};
+
+Output:
+const dtoOut = {
+  itemList: [ // list of all categories
+    {
+      id: "123", // generated unique code
+      name: "Short", // category name
+      length: "short", // length type
+      faceshape: "oval" // faceshape type
+    }
+  ]
+};
+
+Algorithm:
+1. Loads all created categories using category DAO list
+2. Return: Returns properly filled dtoOut with list of categories
+
+Error List:
+Type: Error
+Code: dtoInIsNotValid
+Message: dtoIn is not valid
+Parameters: none
+
+hairstyle/create
+Basic Info
+Name: hairstyle/create
+Description: Creates a new hairstyle.
+HTTP Method: post
+Url: <gateway>/hairstyle/create
+
+Input:
+const dtoIn = {
+  name: "Bob Cut", // hairstyle name
+  lengthCategoryId: "123", // id of length category
+  faceshapeCategoryId: "456", // id of faceshape category
+  note: "Modern bob cut with layers" // optional additional description
+};
+
+Input Validation:
+const schema = {
+  type: "object",
+  properties: {
+    name: { type: "string" },
+    lengthCategoryId: { type: "string" },
+    faceshapeCategoryId: { type: "string" },
+    note: { type: "string" }
+  },
+  required: ["name", "lengthCategoryId", "faceshapeCategoryId"],
+  additionalProperties: false
+};
+
+Output:
+const dtoOut = {
+  id: "1b30f251a2d7d9845cd44e6b5dd012c1", // generated unique code
+  name: "Bob Cut", // hairstyle name
+  lengthCategoryId: "123", // id of length category
+  faceshapeCategoryId: "456", // id of faceshape category
+  note: "Modern bob cut with layers" // additional description
+};
+
+Algorithm:
+1. Validates dtoIn based on Input validation
+   1.1. Error: Input is not valid
+        Code: dtoInIsNotValid
+        Message: dtoIn is not valid
+2. Checks that lengthCategoryId exists using category DAO get
+   2.1. Error: Length category does not exist
+        Code: lengthCategoryDoesNotExist
+        Message: category with id dtoIn.lengthCategoryId does not exist
+3. Checks that faceshapeCategoryId exists using category DAO get
+   3.1. Error: Faceshape category does not exist
+        Code: faceshapeCategoryDoesNotExist
+        Message: category with id dtoIn.faceshapeCategoryId does not exist
+4. Creates a new hairstyle using hairstyle DAO create
+5. Return: Returns properly filled dtoOut with created hairstyle
+
+Error List:
+Type: Error
+Code: dtoInIsNotValid
+Message: dtoIn is not valid
+Parameters: none
+
+Type: Error
+Code: lengthCategoryDoesNotExist
+Message: category with id dtoIn.lengthCategoryId does not exist
+Parameters: none
+
+Type: Error
+Code: faceshapeCategoryDoesNotExist
+Message: category with id dtoIn.faceshapeCategoryId does not exist
+Parameters: none 
