@@ -20,8 +20,7 @@ A Node.js backend application for managing hairstyles and their categories. The 
 
 1. Clone the repository:
 ```bash
-# Replace <repository-url> with your GitHub repository URL after publishing
-git clone <repository-url>
+git clone https://github.com/DaveDemox/ProjectUcesak.git
 cd ProjectUcesak
 ```
 
