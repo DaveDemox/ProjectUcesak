@@ -1,0 +1,31 @@
+# AI Specification - Project Ucesak
+
+## Overview
+A Node.js backend for managing hairstyles and categories, using file-based storage and a clean, modular architecture.
+
+## Key Components
+
+- **server.js**: Entry point, starts the Express server.
+- **app.js**: Configures Express app, middleware, routes, and error handling.
+- **abl/**: Application business logic (orchestrates validation, DAO, and business rules).
+- **controller/**: Handles HTTP requests and responses.
+- **dao/**: File-based data access objects for categories and hairstyles.
+
+## Data Model
+- **Category**: `{ id, name, length, faceshape }`
+- **Hairstyle**: `{ id, name, lengthCategoryId, faceshapeCategoryId, note, isLiked }`
+
+## Main Endpoints
+- `GET /api/categories` - List categories
+- `POST /api/categories` - Create category
+- `GET /api/hairstyles` - List hairstyles (with optional filters)
+- `POST /api/hairstyles` - Create hairstyle
+- `PATCH /api/hairstyles/:id/like` - Toggle like/dislike
+
+## Storage
+- All data is stored as JSON files in `dao/storage/categoryList/` and `dao/storage/hairstyleList/`.
+
+## Notes
+- No database, no ORM, no update/delete endpoints.
+- Like/dislike is a boolean toggle (`isLiked`).
+- Designed for easy extension with a future frontend. 

@@ -7,18 +7,17 @@ A Node.js application for managing hairstyles and categories, with a focus on pr
 ```
 project-ucesak/
 ├── server/                 # Backend server code
-│   ├── src/
-│   │   ├── abl/           # Application Business Logic
-│   │   ├── controller/    # Request handlers
-│   │   ├── dao/           # Data Access Objects
-│   │   │   └── storage/   # File-based storage
-│   │   ├── routes/        # API routes
-│   │   ├── validators/    # Input validation
-│   │   └── app.js         # Express app configuration
-│   └── server.js          # Server entry point
-├── client/                 # Frontend application (future)
-├── package.json           # Project dependencies
-└── README.md             # Project documentation
+│   ├── abl/               # Application Business Logic
+│   ├── controller/        # Request handlers
+│   ├── dao/               # Data Access Objects
+│   │   └── storage/       # File-based storage
+│   ├── routes/            # API routes
+│   ├── validators/        # Input validation
+│   ├── app.js            # Express app configuration
+│   └── server.js         # Server entry point
+├── client/               # Frontend application (future)
+├── package.json         # Project dependencies
+└── README.md           # Project documentation
 ```
 
 ## Features
