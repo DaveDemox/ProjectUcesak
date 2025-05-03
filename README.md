@@ -4,7 +4,7 @@ A Node.js backend application for managing hairstyles and their categories. The 
 
 ## Features
 
-- CRUD operations for hairstyles and categories
+- Create and read operations for hairstyles and categories
 - Categorization by length (short, medium, long) and face shape (oval, square, round)
 - Input validation using AJV
 - MongoDB database integration

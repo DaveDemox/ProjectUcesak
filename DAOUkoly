@@ -71,21 +71,7 @@ Category DAO Methods:
    - Returns: Promise<Category[]>
    - Implementation: Find all categories
 
-4. update(id, categoryData)
-   - Purpose: Update an existing category
-   - Parameters: 
-     - id (string) - Category ID to update
-     - categoryData (object) - Updated category properties
-   - Returns: Promise<Category>
-   - Implementation: Update category, ensure name remains unique if changed
-
-5. delete(id)
-   - Purpose: Delete a category
-   - Parameters: id (string) - Category ID to delete
-   - Returns: Promise<void>
-   - Implementation: Remove category by ID
-
-6. getCategoryMap()
+4. getCategoryMap()
    - Purpose: Get a map of all categories
    - Parameters: none
    - Returns: Promise<Map<string, Category>>
