@@ -3,5 +3,6 @@
   "name": "Shag Cut",
   "lengthCategoryId": "456",
   "faceshapeCategoryId": "102",
-  "note": "Modern shag with lots of texture and movement"
+  "note": "Modern shag with lots of texture and movement",
+  "isLiked": true
 } 

@@ -3,5 +3,6 @@
   "name": "Bob Cut",
   "lengthCategoryId": "456",
   "faceshapeCategoryId": "101",
-  "note": "Modern bob cut with layers"
+  "note": "Modern bob cut with layers",
+  "isLiked": true
 } 

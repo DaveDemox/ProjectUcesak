@@ -57,6 +57,18 @@ class HairstyleController {
         }
     }
 
+    static async toggleLike(req, res) {
+        try {
+            const hairstyle = await hairstyleDao.toggleLike(req.params.id);
+            if (!hairstyle) {
+                return res.status(404).json({ error: 'Hairstyle not found' });
+            }
+            res.json(hairstyle);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
     static async updateHairstyle(req, res) {
         try {
             if (!validateHairstyle(req.body)) {

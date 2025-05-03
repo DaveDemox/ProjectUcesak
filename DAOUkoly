@@ -12,7 +12,8 @@ const hairstyleSchema = {
   name: "Bob Cut", // hairstyle name
   lengthCategoryId: "123", // id of length category
   faceshapeCategoryId: "456", // id of faceshape category
-  note: "Modern bob cut with layers" // additional description
+  note: "Modern bob cut with layers", // additional description
+  isLiked: true // boolean value indicating if hairstyle is liked (true by default, false when disliked)
 };
 
 Implementation Status:
@@ -54,6 +55,30 @@ Implementation Status:
    - Returns: Promise<Hairstyle[]>
    - Implementation: Find hairstyles where faceshapeCategoryId matches
    - Error Handling: Specific error codes for file operations
+
+6. toggleLike(id)
+   - Purpose: Toggle the like status of a hairstyle
+   - Parameters: id (string) - hairstyle ID
+   - Returns: Promise<Hairstyle>
+   - Implementation: 
+     * Get hairstyle by ID
+     * Toggle isLiked boolean value (true → false, false → true)
+     * Save updated hairstyle
+   - Error Handling:
+     * Returns null if hairstyle not found
+     * Specific error codes for file operations
+   - Frontend Usage:
+     * Hairstyles are visible by default (isLiked: true)
+     * When disliked, isLiked becomes false and hairstyle can be hidden from dashboard
+     * Toggling again will make the hairstyle visible again
+   - Example:
+     ```javascript
+     // Initial state: { id: "123", isLiked: true } (visible in dashboard)
+     await toggleLike("123");
+     // After dislike: { id: "123", isLiked: false } (can be hidden from dashboard)
+     await toggleLike("123");
+     // After like: { id: "123", isLiked: true } (visible in dashboard again)
+     ```
 
 ✅ Category DAO Methods (Implemented):
 1. create(categoryData)

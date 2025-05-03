@@ -174,6 +174,28 @@ function listByFaceshapeCategoryId(faceshapeCategoryId) {
   }
 }
 
+// Method to toggle like status of a hairstyle
+function toggleLike(id) {
+  try {
+    const hairstyle = getById(id);
+    if (!hairstyle) {
+      return null;
+    }
+
+    // Toggle the isLiked value
+    hairstyle.isLiked = !hairstyle.isLiked;
+
+    // Save the updated hairstyle
+    const filePath = path.join(hairstyleFolderPath, `${id}.json`);
+    const fileData = JSON.stringify(hairstyle, null, 2);
+    fs.writeFileSync(filePath, fileData, "utf8");
+
+    return hairstyle;
+  } catch (error) {
+    throw { code: "failedToToggleLike", message: error.message };
+  }
+}
+
 module.exports = {
   getById,
   create,
@@ -182,5 +204,6 @@ module.exports = {
   list,
   listByCategory,
   listByLengthCategoryId,
-  listByFaceshapeCategoryId
+  listByFaceshapeCategoryId,
+  toggleLike
 }; 
