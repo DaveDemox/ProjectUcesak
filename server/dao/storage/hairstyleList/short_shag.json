@@ -1,8 +1,8 @@
 {
   "id": "short_shag_1",
   "name": "Short Shag",
-  "lengthCategoryId": "123",
-  "faceshapeCategoryId": "102",
+  "lengthCategoryId": "length_short",
+  "faceshapeCategoryId": "shape_round",
   "note": "Short shaggy cut for round faces.",
   "isLiked": false
 } 

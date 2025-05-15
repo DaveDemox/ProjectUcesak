@@ -2,13 +2,9 @@ const hairstyleDao = require("../../dao/storage/hairstyle-dao");
 
 async function GetAbl(req, res) {
   try {
-    const hairstyle = await hairstyleDao.getById(req.params.id);
+    const hairstyle = hairstyleDao.getById(req.params.id);
     if (!hairstyle) {
-      res.status(404).json({
-        code: "hairstyleNotFound",
-        message: "Hairstyle not found",
-      });
-      return;
+      return res.status(404).json({ code: "hairstyleNotFound", message: "Hairstyle not found" });
     }
     res.json(hairstyle);
   } catch (e) {

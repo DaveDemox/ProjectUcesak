@@ -1,8 +1,8 @@
 {
   "id": "medium_bob_1",
   "name": "Medium Bob",
-  "lengthCategoryId": "456",
-  "faceshapeCategoryId": "102",
+  "lengthCategoryId": "length_medium",
+  "faceshapeCategoryId": "shape_round",
   "note": "Medium length bob for round faces.",
   "isLiked": false
 } 

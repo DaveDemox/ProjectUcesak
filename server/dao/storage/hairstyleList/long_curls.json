@@ -1,8 +1,8 @@
 {
   "id": "long_curls_1",
   "name": "Long Curls",
-  "lengthCategoryId": "789",
-  "faceshapeCategoryId": "102",
+  "lengthCategoryId": "length_long",
+  "faceshapeCategoryId": "shape_round",
   "note": "Long curly style for round faces.",
   "isLiked": false
 } 

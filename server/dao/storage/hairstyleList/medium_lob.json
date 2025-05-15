@@ -1,8 +1,8 @@
 {
   "id": "medium_lob_1",
   "name": "Medium Lob",
-  "lengthCategoryId": "456",
-  "faceshapeCategoryId": "103",
+  "lengthCategoryId": "length_medium",
+  "faceshapeCategoryId": "shape_square",
   "note": "Medium lob for square faces.",
   "isLiked": false
 } 

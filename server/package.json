@@ -1,22 +1,21 @@
 {
   "name": "project-ucesak",
   "version": "1.0.0",
-  "description": "Hairstyle Recommendation System",
-  "main": "app.js",
+  "description": "Hairstyle recommendation system",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "keywords": [],
   "author": "David Pešek",
   "license": "ISC",
   "dependencies": {
-    "ajv": "^8.17.1",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.10"
   }
 }

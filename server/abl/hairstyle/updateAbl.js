@@ -1,5 +1,6 @@
 const hairstyleDao = require('../../dao/storage/hairstyle-dao');
-const categoryDao = require('../../dao/storage/category-dao');
+const lengthCategoryDao = require('../../dao/storage/length-category-dao');
+const faceshapeCategoryDao = require('../../dao/storage/faceshape-category-dao');
 
 async function UpdateAbl(req, res) {
     try {
@@ -12,26 +13,16 @@ async function UpdateAbl(req, res) {
             return;
         }
 
-        // Validate categories exist if being updated
-        if (req.body.lengthCategoryId) {
-            const lengthCategory = await categoryDao.getById(req.body.lengthCategoryId);
-            if (!lengthCategory) {
-                res.status(404).json({
-                    code: "lengthCategoryNotFound",
-                    message: "Length category not found"
-                });
-                return;
-            }
+        // Validate referenced categories
+        const lengthCategory = lengthCategoryDao.getById(hairstyle.lengthCategoryId);
+        const faceshapeCategory = faceshapeCategoryDao.getById(hairstyle.faceshapeCategoryId);
+        if (!lengthCategory) {
+            res.status(400).json({ code: "lengthCategoryNotFound", message: "Length category not found" });
+            return;
         }
-        if (req.body.faceshapeCategoryId) {
-            const faceshapeCategory = await categoryDao.getById(req.body.faceshapeCategoryId);
-            if (!faceshapeCategory) {
-                res.status(404).json({
-                    code: "faceshapeCategoryNotFound",
-                    message: "Face shape category not found"
-                });
-                return;
-            }
+        if (!faceshapeCategory) {
+            res.status(400).json({ code: "faceshapeCategoryNotFound", message: "Faceshape category not found" });
+            return;
         }
 
         const updatedHairstyle = await hairstyleDao.update({

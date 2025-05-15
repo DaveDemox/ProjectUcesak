@@ -7,6 +7,16 @@ const CreateAbl = require('../abl/hairstyle/createAbl');
 const ToggleLikeAbl = require('../abl/hairstyle/toggleLikeAbl');
 const UpdateAbl = require('../abl/hairstyle/updateAbl');
 const DeleteAbl = require('../abl/hairstyle/deleteAbl');
+const lengthCategoryDao = require("../dao/storage/length-category-dao");
+const faceshapeCategoryDao = require("../dao/storage/faceshape-category-dao");
+
+router.get('/length-categories', (req, res) => {
+  res.json(lengthCategoryDao.list());
+});
+
+router.get('/faceshape-categories', (req, res) => {
+  res.json(faceshapeCategoryDao.list());
+});
 
 router.get('/:id', GetAbl);
 router.get('/', ListAbl);

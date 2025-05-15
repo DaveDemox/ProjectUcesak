@@ -1,8 +1,8 @@
 {
   "id": "medium_wave_1",
   "name": "Medium Wave",
-  "lengthCategoryId": "456",
-  "faceshapeCategoryId": "101",
+  "lengthCategoryId": "length_medium",
+  "faceshapeCategoryId": "shape_oval",
   "note": "Medium wavy style for oval faces.",
   "isLiked": false
 } 
