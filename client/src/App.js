@@ -97,91 +97,95 @@ function Dashboard({ onCreate }) {
     }
   };
 
+  // Sort hairstyles: liked/unrated first, disliked last
+  const sortedHairstyles = [
+    ...hairstyles.filter(h => h.isLiked !== false),
+    ...hairstyles.filter(h => h.isLiked === false)
+  ];
+
   return (
-    <div className="container min-vh-100 py-3 d-flex align-items-center justify-content-center">
+    <div className="container min-vh-100 py-3 d-flex flex-column align-items-center justify-content-center" style={{ position: 'relative', padding: 0 }}>
+      <div className="fixed-top-bar">
+        <div className="filter-row">
+          <div className="filter-col">
+            <label htmlFor="length-picker" className="form-label-lg">Length</label>
+            <select
+              id="length-picker"
+              name="length"
+              className="form-select"
+              value={selectedLength}
+              onChange={e => setSelectedLength(e.target.value)}
+            >
+              <option value="">Length</option>
+              {uniqueLengthOptions.map(opt => (
+                <option key={opt.id} value={opt.id}>{opt.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="filter-col">
+            <label htmlFor="shape-picker" className="form-label-lg">Face shape</label>
+            <select
+              id="shape-picker"
+              name="shape"
+              className="form-select"
+              value={selectedShape}
+              onChange={e => setSelectedShape(e.target.value)}
+            >
+              <option value="">Shape</option>
+              {uniqueShapeOptions.map(opt => (
+                <option key={opt.id} value={opt.id}>{opt.name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
       <div className="dashboard-mobile">
-        <div className="dashboard-group">
-          <label htmlFor="length-picker" className="form-label-lg">Length</label>
-          <select
-            id="length-picker"
-            name="length"
-            className="form-select"
-            value={selectedLength}
-            onChange={e => setSelectedLength(e.target.value)}
-          >
-            <option value="">Length</option>
-            {uniqueLengthOptions.map(opt => (
-              <option key={opt.id} value={opt.id}>{opt.name}</option>
-            ))}
-          </select>
-        </div>
-        <div className="dashboard-group">
-          <label htmlFor="shape-picker" className="form-label-lg">Face shape</label>
-          <select
-            id="shape-picker"
-            name="shape"
-            className="form-select"
-            value={selectedShape}
-            onChange={e => setSelectedShape(e.target.value)}
-          >
-            <option value="">Shape</option>
-            {uniqueShapeOptions.map(opt => (
-              <option key={opt.id} value={opt.id}>{opt.name}</option>
-            ))}
-          </select>
-        </div>
-        <div className="row flex-grow-1 align-items-center justify-content-center" style={{ marginTop: 24, marginBottom: 24 }}>
-          {hairstyles.length === 0 && (
-            <span className="text-muted">No haircuts found</span>
-          )}
-          {hairstyles.map((h) => (
-            <div className="col-12 mb-4 d-flex justify-content-center" key={h.id}>
-              <div className="card text-center" style={{ width: "90%" }}>
-                <div className="card-body">
-                  <div
-                    style={{
-                      width: 80,
-                      height: 80,
-                      border: "2px solid #333",
-                      borderRadius: "50%",
-                      margin: "0 auto 10px auto",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      overflow: "hidden"
-                    }}
-                  >
-                    {h.imageUrl ? (
-                      <img src={`http://localhost:3004${h.imageUrl}`} alt={h.name} style={{ width: 76, height: 76, objectFit: 'cover', borderRadius: '50%' }} />
-                    ) : (
-                      <span style={{ fontSize: 40, color: "#bbb" }}>&#128100;</span>
-                    )}
-                  </div>
-                  <h5 className="card-title">{h.name}</h5>
-                  <div className="d-flex justify-content-center gap-2 mb-2">
-                    <button
-                      className={`btn btn-sm ${h.isLiked === true ? 'btn-success' : 'btn-outline-secondary'}`}
-                      onClick={() => handleLike(h.id, true)}
-                      type="button"
-                      disabled={h.isLiked === true}
-                    >
-                      Like
-                    </button>
-                    <button
-                      className={`btn btn-sm ${h.isLiked === false ? 'btn-danger' : 'btn-outline-secondary'}`}
-                      onClick={() => handleLike(h.id, false)}
-                      type="button"
-                      disabled={h.isLiked === false}
-                    >
-                      Dislike
-                    </button>
+        <div style={{ flex: 1, width: '100%' }}>
+          <div className="row flex-grow-1 align-items-center justify-content-center" style={{ marginTop: 24, marginBottom: 24 }}>
+            {sortedHairstyles.length === 0 && (
+              <span className="text-muted">No haircuts found</span>
+            )}
+            {sortedHairstyles.map((h) => (
+              <div className="col-12 mb-4 d-flex justify-content-center" key={h.id}>
+                <div className="card text-center">
+                  <div className="card-body">
+                    <div className="card-image-rect">
+                      {h.imageUrl ? (
+                        <img src={`http://localhost:3004${h.imageUrl}`} alt={h.name} />
+                      ) : (
+                        <span style={{ fontSize: '8vw', color: "#bbb" }}>&#128100;</span>
+                      )}
+                    </div>
+                    <h5 className="card-title" style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 700, marginBottom: 24 }}>{h.name}</h5>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: 32, marginBottom: 16 }}>
+                      <button
+                        className={`btn btn-lg ${h.isLiked === true ? 'btn-success' : 'btn-outline-secondary'}`}
+                        onClick={() => handleLike(h.id, true)}
+                        type="button"
+                        disabled={h.isLiked === true}
+                        style={{ fontSize: '1.2rem', minWidth: 100 }}
+                      >
+                        Like
+                      </button>
+                      <button
+                        className={`btn btn-lg ${h.isLiked === false ? 'btn-danger' : 'btn-outline-secondary'}`}
+                        onClick={() => handleLike(h.id, false)}
+                        type="button"
+                        disabled={h.isLiked === false}
+                        style={{ fontSize: '1.2rem', minWidth: 100 }}
+                      >
+                        Dislike
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-        <div className="dashboard-buttons">
+      </div>
+      <div className="fixed-bottom-bar">
+        <div className="dashboard-buttons" style={{ width: '100%', maxWidth: 480 }}>
           <button className="btn btn-outline-primary" onClick={handleRandom}>Random</button>
           <button className="btn btn-outline-success" onClick={() => navigate('/create')}>Create</button>
         </div>
@@ -279,8 +283,8 @@ function CreateHairstyle() {
   const uniqueShapeOptions = Array.from(new Map(shapeOptions.map(opt => [opt.id, opt])).values());
 
   return (
-    <div className="container min-vh-100 py-3 d-flex align-items-center justify-content-center">
-      <form onSubmit={handleSubmit} className="form-mobile">
+    <div className="container min-vh-100 py-3 d-flex align-items-center justify-content-center" style={{ position: 'relative', padding: 0 }}>
+      <form onSubmit={handleSubmit} className="form-mobile" style={{ paddingBottom: 80 }}>
         <div className="form-group">
           <label htmlFor="name" className="form-label-lg">Name</label>
           <input 
@@ -337,10 +341,13 @@ function CreateHairstyle() {
             <span>Image</span>
           </div>
         </div>
-        <div className="button-row">
+      </form>
+      <div className="fixed-bottom-bar">
+        <div className="button-row" style={{ width: '100%', maxWidth: 400 }}>
           <button 
             type="submit" 
             className="btn btn-outline-success"
+            form="create-hairstyle-form"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Creating...' : 'Create'}
@@ -354,7 +361,7 @@ function CreateHairstyle() {
             Cancel
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
