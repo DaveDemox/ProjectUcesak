@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import './App.css';
 
 function Dashboard({ onCreate }) {
   const [lengthOptions, setLengthOptions] = useState([]);
@@ -43,7 +44,7 @@ function Dashboard({ onCreate }) {
         let url = "http://localhost:3004/api/hairstyles";
         const params = [];
         if (selectedLength) params.push(`lengthCategoryId=${selectedLength}`);
-        if (selectedShape) params.push(`faceshapeCategoryId=${selectedShape}`);
+        if (selectedShape) params.push(`faceShapeCategoryId=${selectedShape}`);
         if (params.length) url += "?" + params.join("&");
 
         const response = await fetch(url);
@@ -64,11 +65,43 @@ function Dashboard({ onCreate }) {
 
   const navigate = useNavigate();
 
+  // Add like/dislike handler
+  const handleLike = async (id, isLiked) => {
+    try {
+      const response = await fetch(`http://localhost:3004/api/hairstyles/${id}/like`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isLiked })
+      });
+      if (!response.ok) throw new Error('Failed to update like');
+      const updated = await response.json();
+      setHairstyles(prev => prev.map(h => h.id === id ? { ...h, isLiked: updated.isLiked } : h));
+    } catch (e) {
+      alert('Error updating like: ' + e.message);
+    }
+  };
+
+  // Remove duplicates from options
+  const uniqueLengthOptions = Array.from(new Map(lengthOptions.map(opt => [opt.id, opt])).values());
+  const uniqueShapeOptions = Array.from(new Map(shapeOptions.map(opt => [opt.id, opt])).values());
+
+  // Random filter handler
+  const handleRandom = () => {
+    if (lengthOptions.length > 0) {
+      const randomLength = lengthOptions[Math.floor(Math.random() * lengthOptions.length)].id;
+      setSelectedLength(randomLength);
+    }
+    if (shapeOptions.length > 0) {
+      const randomShape = shapeOptions[Math.floor(Math.random() * shapeOptions.length)].id;
+      setSelectedShape(randomShape);
+    }
+  };
+
   return (
-    <div className="container d-flex flex-column justify-content-between min-vh-100 py-3">
-      {/* Top pickers */}
-      <div className="row mb-4">
-        <div className="col-6">
+    <div className="container min-vh-100 py-3 d-flex align-items-center justify-content-center">
+      <div className="dashboard-mobile">
+        <div className="dashboard-group">
+          <label htmlFor="length-picker" className="form-label-lg">Length</label>
           <select
             id="length-picker"
             name="length"
@@ -77,12 +110,13 @@ function Dashboard({ onCreate }) {
             onChange={e => setSelectedLength(e.target.value)}
           >
             <option value="">Length</option>
-            {lengthOptions.map(opt => (
+            {uniqueLengthOptions.map(opt => (
               <option key={opt.id} value={opt.id}>{opt.name}</option>
             ))}
           </select>
         </div>
-        <div className="col-6">
+        <div className="dashboard-group">
+          <label htmlFor="shape-picker" className="form-label-lg">Face shape</label>
           <select
             id="shape-picker"
             name="shape"
@@ -91,53 +125,64 @@ function Dashboard({ onCreate }) {
             onChange={e => setSelectedShape(e.target.value)}
           >
             <option value="">Shape</option>
-            {shapeOptions.map(opt => (
+            {uniqueShapeOptions.map(opt => (
               <option key={opt.id} value={opt.id}>{opt.name}</option>
             ))}
           </select>
         </div>
-      </div>
-
-      {/* Haircuts grid */}
-      <div className="row flex-grow-1 align-items-center justify-content-center">
-        {hairstyles.length === 0 && (
-          <span className="text-muted">No haircuts found</span>
-        )}
-        {hairstyles.map((h) => (
-          <div className="col-6 mb-4 d-flex justify-content-center" key={h.id}>
-            <div className="card text-center" style={{ width: "90%" }}>
-              <div className="card-body">
-                <div
-                  style={{
-                    width: 80,
-                    height: 80,
-                    border: "2px solid #333",
-                    borderRadius: "50%",
-                    margin: "0 auto 10px auto",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span style={{ fontSize: 40, color: "#bbb" }}>&#128100;</span>
-                </div>
-                <h5 className="card-title">{h.name}</h5>
-                <div className="d-flex justify-content-center gap-2 mb-2">
-                  <button className="btn btn-outline-success btn-sm">Like</button>
-                  <button className="btn btn-outline-danger btn-sm">Dislike</button>
+        <div className="row flex-grow-1 align-items-center justify-content-center" style={{ marginTop: 24, marginBottom: 24 }}>
+          {hairstyles.length === 0 && (
+            <span className="text-muted">No haircuts found</span>
+          )}
+          {hairstyles.map((h) => (
+            <div className="col-12 mb-4 d-flex justify-content-center" key={h.id}>
+              <div className="card text-center" style={{ width: "90%" }}>
+                <div className="card-body">
+                  <div
+                    style={{
+                      width: 80,
+                      height: 80,
+                      border: "2px solid #333",
+                      borderRadius: "50%",
+                      margin: "0 auto 10px auto",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden"
+                    }}
+                  >
+                    {h.imageUrl ? (
+                      <img src={`http://localhost:3004${h.imageUrl}`} alt={h.name} style={{ width: 76, height: 76, objectFit: 'cover', borderRadius: '50%' }} />
+                    ) : (
+                      <span style={{ fontSize: 40, color: "#bbb" }}>&#128100;</span>
+                    )}
+                  </div>
+                  <h5 className="card-title">{h.name}</h5>
+                  <div className="d-flex justify-content-center gap-2 mb-2">
+                    <button
+                      className={`btn btn-sm ${h.isLiked === true ? 'btn-success' : 'btn-outline-secondary'}`}
+                      onClick={() => handleLike(h.id, true)}
+                      type="button"
+                      disabled={h.isLiked === true}
+                    >
+                      Like
+                    </button>
+                    <button
+                      className={`btn btn-sm ${h.isLiked === false ? 'btn-danger' : 'btn-outline-secondary'}`}
+                      onClick={() => handleLike(h.id, false)}
+                      type="button"
+                      disabled={h.isLiked === false}
+                    >
+                      Dislike
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Bottom buttons */}
-      <div className="row mt-4">
-        <div className="col-6 d-grid">
-          <button className="btn btn-outline-primary">Random</button>
+          ))}
         </div>
-        <div className="col-6 d-grid">
+        <div className="dashboard-buttons">
+          <button className="btn btn-outline-primary" onClick={handleRandom}>Random</button>
           <button className="btn btn-outline-success" onClick={() => navigate('/create')}>Create</button>
         </div>
       </div>
@@ -153,6 +198,7 @@ function CreateHairstyle() {
     lengthCategoryId: '',
     faceShapeCategoryId: ''
   });
+  const [imageFile, setImageFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -191,30 +237,34 @@ function CreateHairstyle() {
     }));
   };
 
+  const handleImageChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     // Validate form
     if (!formData.name || !formData.lengthCategoryId || !formData.faceShapeCategoryId) {
       alert('Please fill in all fields');
       return;
     }
-
     setIsSubmitting(true);
     try {
+      const form = new FormData();
+      form.append('name', formData.name);
+      form.append('lengthCategoryId', formData.lengthCategoryId);
+      form.append('faceShapeCategoryId', formData.faceShapeCategoryId);
+      if (imageFile) {
+        form.append('image', imageFile);
+      }
       const response = await fetch('http://localhost:3004/api/hairstyles', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
+        body: form
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to create hairstyle');
       }
-
       // Navigate back to dashboard on success
       navigate('/');
     } catch (error) {
@@ -224,11 +274,15 @@ function CreateHairstyle() {
     }
   };
 
+  // Deduplicate options for CreateHairstyle
+  const uniqueLengthOptions = Array.from(new Map(lengthOptions.map(opt => [opt.id, opt])).values());
+  const uniqueShapeOptions = Array.from(new Map(shapeOptions.map(opt => [opt.id, opt])).values());
+
   return (
-    <div className="container d-flex flex-column min-vh-100 py-3">
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="name" className="form-label fw-bold">Name</label>
+    <div className="container min-vh-100 py-3 d-flex align-items-center justify-content-center">
+      <form onSubmit={handleSubmit} className="form-mobile">
+        <div className="form-group">
+          <label htmlFor="name" className="form-label-lg">Name</label>
           <input 
             type="text" 
             className="form-control" 
@@ -239,8 +293,8 @@ function CreateHairstyle() {
             required
           />
         </div>
-        <div className="mb-3">
-          <label htmlFor="lengthCategoryId" className="form-label fw-bold">Length</label>
+        <div className="form-group">
+          <label htmlFor="lengthCategoryId" className="form-label-lg">Length</label>
           <select 
             className="form-select" 
             id="lengthCategoryId" 
@@ -250,13 +304,13 @@ function CreateHairstyle() {
             required
           >
             <option value="">Select length</option>
-            {lengthOptions.map(opt => (
+            {uniqueLengthOptions.map(opt => (
               <option key={opt.id} value={opt.id}>{opt.name}</option>
             ))}
           </select>
         </div>
-        <div className="mb-3">
-          <label htmlFor="faceShapeCategoryId" className="form-label fw-bold">Face shape</label>
+        <div className="form-group">
+          <label htmlFor="faceShapeCategoryId" className="form-label-lg">Face shape</label>
           <select 
             className="form-select" 
             id="faceShapeCategoryId" 
@@ -266,37 +320,39 @@ function CreateHairstyle() {
             required
           >
             <option value="">Select face shape</option>
-            {shapeOptions.map(opt => (
+            {uniqueShapeOptions.map(opt => (
               <option key={opt.id} value={opt.id}>{opt.name}</option>
             ))}
           </select>
         </div>
-        <div className="mb-3">
-          <label className="form-label fw-bold">Image</label>
-          <div style={{ width: 120, height: 120, border: '2px solid #333', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: 40, color: '#bbb' }}>Image</span>
+        <div className="form-group">
+          <label className="form-label-lg">Image</label>
+          <input
+            type="file"
+            className="form-control"
+            accept="image/png"
+            onChange={handleImageChange}
+          />
+          <div className="image-preview">
+            <span>Image</span>
           </div>
         </div>
-        <div className="row mt-4">
-          <div className="col-6 d-grid">
-            <button 
-              type="submit" 
-              className="btn btn-outline-success"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Creating...' : 'Create'}
-            </button>
-          </div>
-          <div className="col-6 d-grid">
-            <button 
-              type="button" 
-              className="btn btn-outline-secondary" 
-              onClick={() => navigate('/')}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </button>
-          </div>
+        <div className="button-row">
+          <button 
+            type="submit" 
+            className="btn btn-outline-success"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Creating...' : 'Create'}
+          </button>
+          <button 
+            type="button" 
+            className="btn btn-outline-secondary" 
+            onClick={() => navigate('/')}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </button>
         </div>
       </form>
     </div>

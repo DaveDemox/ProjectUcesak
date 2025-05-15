@@ -1,3 +1,73 @@
+/* App.css - Global styles for the Hairstyle Recommendation App */
+
+body {
+  background: #f8fafc;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  padding: 32px 16px;
+}
+
+.card {
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: none;
+  background: #f9f9f9;
+}
+
+.card-title {
+  font-weight: 600;
+  color: #222;
+}
+
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-success {
+  background: #28a745 !important;
+  color: #fff !important;
+}
+
+.btn-danger {
+  background: #dc3545 !important;
+  color: #fff !important;
+}
+
+.btn-outline-secondary {
+  color: #6c757d;
+  border-color: #6c757d;
+}
+
+.form-select, .form-control {
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+label.form-label {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Avatar/image styling */
+.card .card-body > div[style*='border-radius: 50%'] img {
+  border: 2px solid #28a745;
+}
+
+.text-muted {
+  color: #888 !important;
+}
+
 .App {
   text-align: center;
 }
@@ -34,5 +104,167 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Remove absolute positioning utility classes */
+.top-left, .top-right, .bottom-left, .bottom-right, .position-relative {
+  position: static !important;
+  width: auto !important;
+  min-height: unset !important;
+}
+
+/* Flex layout for top and bottom rows */
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+@media (max-width: 600px) {
+  .top-row, .bottom-row {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+    margin-top: 16px;
+  }
+}
+
+/* Center the form fields in create page */
+.create-center {
+  max-width: 350px;
+  margin: 0 auto 32px auto;
+}
+
+.form-mobile {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 24px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-label-lg {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-mobile .form-control, .form-mobile .form-select {
+  width: 100%;
+  font-size: 1.1rem;
+  padding: 8px 12px;
+}
+
+.image-preview {
+  width: 140px;
+  height: 140px;
+  border: 2px solid #333;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  font-size: 1.2rem;
+  color: #bbb;
+}
+
+.button-row {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.button-row .btn {
+  min-width: 120px;
+  font-size: 1.1rem;
+  padding: 8px 0;
+}
+
+@media (max-width: 600px) {
+  .form-mobile {
+    max-width: 98vw;
+    padding: 8px 0 0 0;
+  }
+  .button-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .button-row .btn {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+.dashboard-mobile {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 24px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dashboard-mobile .form-label-lg {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.dashboard-mobile .form-select {
+  width: 100%;
+  font-size: 1.1rem;
+  padding: 8px 12px;
+}
+
+.dashboard-buttons {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.dashboard-buttons .btn {
+  min-width: 120px;
+  font-size: 1.1rem;
+  padding: 8px 0;
+}
+
+@media (max-width: 600px) {
+  .dashboard-mobile {
+    max-width: 98vw;
+    padding: 8px 0 0 0;
+  }
+  .dashboard-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .dashboard-buttons .btn {
+    width: 100%;
+    min-width: unset;
   }
 }

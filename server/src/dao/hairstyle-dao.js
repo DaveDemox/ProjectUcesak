@@ -25,6 +25,7 @@ class HairstyleDao {
         const newHairstyle = {
             id,
             ...hairstyle,
+            isLiked: typeof hairstyle.isLiked === 'boolean' ? hairstyle.isLiked : undefined,
             createdAt: new Date().toISOString()
         };
 
@@ -60,6 +61,23 @@ class HairstyleDao {
         try {
             const content = await fs.readFile(path.join(HAIRSTYLE_LIST_PATH, `${id}.json`), 'utf8');
             return JSON.parse(content);
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                return null;
+            }
+            throw error;
+        }
+    }
+
+    async updateIsLiked(id, isLiked) {
+        await ensureStorageExists();
+        const filePath = path.join(HAIRSTYLE_LIST_PATH, `${id}.json`);
+        try {
+            const content = await fs.readFile(filePath, 'utf8');
+            const hairstyle = JSON.parse(content);
+            hairstyle.isLiked = isLiked;
+            await fs.writeFile(filePath, JSON.stringify(hairstyle, null, 2));
+            return hairstyle;
         } catch (error) {
             if (error.code === 'ENOENT') {
                 return null;

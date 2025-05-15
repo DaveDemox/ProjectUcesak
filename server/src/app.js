@@ -3,6 +3,7 @@ const cors = require('cors');
 const hairstyleRoutes = require('./routes/hairstyle-routes');
 const lengthCategoryRoutes = require('./routes/length-category-routes');
 const faceShapeCategoryRoutes = require('./routes/faceshape-category-routes');
+const path = require('path');
 
 const app = express();
 
@@ -20,6 +21,9 @@ app.use((req, res, next) => {
 app.use('/api/hairstyles/length-categories', lengthCategoryRoutes);
 app.use('/api/hairstyles/faceshape-categories', faceShapeCategoryRoutes);
 app.use('/api/hairstyles', hairstyleRoutes);
+
+// Serve images statically
+app.use('/images', express.static(path.join(__dirname, 'dao', 'storage', 'hairstyleImages')));
 
 // Error handling
 app.use((err, req, res, next) => {

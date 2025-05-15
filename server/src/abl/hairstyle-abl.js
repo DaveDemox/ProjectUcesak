@@ -43,6 +43,14 @@ class HairstyleAbl {
     async getById(id) {
         return await hairstyleDao.getById(id);
     }
+
+    async updateIsLiked(id, isLiked) {
+        const hairstyle = await hairstyleDao.updateIsLiked(id, isLiked);
+        if (!hairstyle) {
+            throw new Error('Hairstyle not found');
+        }
+        return hairstyle;
+    }
 }
 
 module.exports = new HairstyleAbl(); 
