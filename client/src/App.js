@@ -106,7 +106,7 @@ function Dashboard({ onCreate }) {
   return (
     <div className="container min-vh-100 py-3 d-flex flex-column align-items-center justify-content-center" style={{ position: 'relative', padding: 0 }}>
       <div className="fixed-top-bar">
-        <div className="filter-row">
+        <div className="filter-row" style={{ alignItems: 'center', position: 'relative' }}>
           <div className="filter-col">
             <label htmlFor="length-picker" className="form-label-lg">Length</label>
             <select
@@ -121,6 +121,9 @@ function Dashboard({ onCreate }) {
                 <option key={opt.id} value={opt.id}>{opt.name}</option>
               ))}
             </select>
+          </div>
+          <div className="top-bar-icon">
+            <img src="/logo512.png" alt="Logo" style={{ width: 48, height: 48 }} />
           </div>
           <div className="filter-col">
             <label htmlFor="shape-picker" className="form-label-lg">Face shape</label>
