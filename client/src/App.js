@@ -284,7 +284,7 @@ function CreateHairstyle() {
 
   return (
     <div className="container min-vh-100 py-3 d-flex align-items-center justify-content-center" style={{ position: 'relative', padding: 0 }}>
-      <form onSubmit={handleSubmit} className="form-mobile" style={{ paddingBottom: 80 }}>
+      <form id="create-hairstyle-form" onSubmit={handleSubmit} className="form-mobile" style={{ paddingBottom: 80 }}>
         <div className="form-group">
           <label htmlFor="name" className="form-label-lg">Name</label>
           <input 
@@ -334,7 +334,7 @@ function CreateHairstyle() {
           <input
             type="file"
             className="form-control"
-            accept="image/png"
+            accept="image/png, image/jpeg"
             onChange={handleImageChange}
           />
           <div className="image-preview">

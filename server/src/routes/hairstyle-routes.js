@@ -14,7 +14,21 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + '-' + file.originalname);
   }
 });
-const upload = multer({ storage: storage });
+
+// Accept only PNG and JPG/JPEG
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpeg' ||
+    file.mimetype === 'image/jpg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only .png, .jpg and .jpeg format allowed!'), false);
+  }
+};
+
+const upload = multer({ storage: storage, fileFilter });
 
 // Create new hairstyle (with image upload)
 router.post('/', upload.single('image'), async (req, res) => {
